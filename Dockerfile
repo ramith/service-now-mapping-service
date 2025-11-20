@@ -1,30 +1,20 @@
-# Build stage
-FROM golang:1.23-alpine AS builder
+# Start from the official Go image
+FROM golang:1.23
 
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copy go mod files
-COPY go.mod go.sum ./
-
-# Download dependencies
-RUN go mod download
-
-# Copy source code
+# Copy all files into the container
 COPY . .
 
-# Build the Go app with CGO disabled (no need for SQLite C bindings)
-RUN CGO_ENABLED=0 GOOS=linux go build -o main ./cmd/server
+# Build the Go app
+RUN go build -o main ./cmd/server
 
-# Final stage - use distroless for minimal attack surface
-FROM gcr.io/distroless/static-debian12:nonroot
-
-WORKDIR /app
-
-# Copy binary from builder
-COPY --from=builder /app/main .
+# Set a non-root user
+USER 10014
 
 # Expose port 8080
 EXPOSE 8080
 
-# Run the app (distroless already uses non-root user)
+# Run the app
 CMD ["./main"]
