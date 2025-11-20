@@ -48,7 +48,8 @@ func LoadConfig() *Config {
 }
 
 func (c *DatabaseConfig) GetDSN() string {
-	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+	// Add TLS configuration for Azure MySQL
+	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local&tls=true",
 		c.User,
 		c.Password,
 		c.Host,
