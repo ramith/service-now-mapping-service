@@ -107,19 +107,16 @@ func setupRouter(handler *handlers.APIMappingHandler) *gin.Engine {
 	// Health check endpoint
 	router.GET("/health", handler.HealthCheck)
 
-	// API v1 routes
-	v1 := router.Group("/api/v1")
+	// Mapping routes
+	mappings := router.Group("/mappings")
 	{
-		mappings := v1.Group("/mappings")
-		{
-			mappings.POST("", handler.CreateMapping)
-			mappings.GET("", handler.GetAllMappings)
-			mappings.GET("/sys-id/:sys_id", handler.GetMappingBySysID)
-			mappings.GET("/api-id/:api_id", handler.GetMappingByAPIID)
-			mappings.GET("/search", handler.GetMappingByNameAndVersion)
-			mappings.PUT("/:id", handler.UpdateMapping)
-			mappings.DELETE("/:id", handler.DeleteMapping)
-		}
+		mappings.POST("", handler.CreateMapping)
+		mappings.GET("", handler.GetAllMappings)
+		mappings.GET("/sys-id/:sys_id", handler.GetMappingBySysID)
+		mappings.GET("/api-id/:api_id", handler.GetMappingByAPIID)
+		mappings.GET("/search", handler.GetMappingByNameAndVersion)
+		mappings.PUT("/:id", handler.UpdateMapping)
+		mappings.DELETE("/:id", handler.DeleteMapping)
 	}
 
 	return router
