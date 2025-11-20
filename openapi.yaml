@@ -1,0 +1,443 @@
+openapi: 3.0.3
+info:
+  title: ServiceNow Mapping Service API
+  description: A microservice for managing mappings between ServiceNow system IDs and API configurations
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@example.com
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+  - url: https://api.example.com
+    description: Production server
+
+tags:
+  - name: Health
+    description: Health check endpoints
+  - name: Mappings
+    description: API mapping management operations
+
+paths:
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Health check
+      description: Returns the health status of the service
+      operationId: healthCheck
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  service:
+                    type: string
+                    example: servicenow-mapping-service
+                  status:
+                    type: string
+                    example: healthy
+
+  /api/v1/mappings:
+    post:
+      tags:
+        - Mappings
+      summary: Create a new API mapping
+      description: Creates a new mapping between ServiceNow system ID and API configuration
+      operationId: createMapping
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAPIMapping'
+      responses:
+        '201':
+          description: Mapping created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIMapping'
+        '400':
+          description: Invalid request payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Mapping already exists (duplicate sys_id or api_name+api_version)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    get:
+      tags:
+        - Mappings
+      summary: Get all API mappings
+      description: Retrieves all API mappings from the database
+      operationId: getAllMappings
+      responses:
+        '200':
+          description: List of all mappings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/APIMapping'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/mappings/sys-id/{sys_id}:
+    get:
+      tags:
+        - Mappings
+      summary: Get mapping by ServiceNow system ID
+      description: Retrieves a specific API mapping using the ServiceNow system ID
+      operationId: getMappingBySysID
+      parameters:
+        - name: sys_id
+          in: path
+          required: true
+          description: ServiceNow system ID
+          schema:
+            type: string
+            maxLength: 32
+            example: SYS001
+      responses:
+        '200':
+          description: Mapping found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIMapping'
+        '404':
+          description: Mapping not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/mappings/api-id/{api_id}:
+    get:
+      tags:
+        - Mappings
+      summary: Get mapping by API ID
+      description: Retrieves a specific API mapping using the API ID
+      operationId: getMappingByAPIID
+      parameters:
+        - name: api_id
+          in: path
+          required: true
+          description: API identifier
+          schema:
+            type: string
+            maxLength: 100
+            example: API001
+      responses:
+        '200':
+          description: Mapping found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIMapping'
+        '404':
+          description: Mapping not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/mappings/search:
+    get:
+      tags:
+        - Mappings
+      summary: Search mapping by API name and version
+      description: Retrieves a specific API mapping using the API name and version combination
+      operationId: getMappingByNameAndVersion
+      parameters:
+        - name: api_name
+          in: query
+          required: true
+          description: API name
+          schema:
+            type: string
+            maxLength: 255
+            example: UserService
+        - name: api_version
+          in: query
+          required: true
+          description: API version
+          schema:
+            type: string
+            maxLength: 50
+            example: v1.0
+      responses:
+        '200':
+          description: Mapping found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIMapping'
+        '400':
+          description: Missing required query parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Mapping not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/mappings/{id}:
+    put:
+      tags:
+        - Mappings
+      summary: Update an existing API mapping
+      description: Updates an API mapping by its database ID
+      operationId: updateMapping
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Database ID of the mapping
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAPIMapping'
+      responses:
+        '200':
+          description: Mapping updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIMapping'
+        '400':
+          description: Invalid request payload or ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Mapping not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+        - Mappings
+      summary: Delete an API mapping
+      description: Soft deletes an API mapping by its database ID
+      operationId: deleteMapping
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Database ID of the mapping
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '200':
+          description: Mapping deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Mapping deleted successfully
+        '400':
+          description: Invalid ID parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Mapping not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    APIMapping:
+      type: object
+      description: Complete API mapping object with all fields
+      required:
+        - id
+        - sys_id
+        - api_id
+        - api_name
+        - api_version
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Database primary key
+          example: 1
+        sys_id:
+          type: string
+          maxLength: 32
+          description: ServiceNow system identifier
+          example: SYS001
+        api_id:
+          type: string
+          maxLength: 100
+          description: API identifier
+          example: API001
+        api_name:
+          type: string
+          maxLength: 255
+          description: Name of the API
+          example: UserService
+        api_version:
+          type: string
+          maxLength: 50
+          description: Version of the API
+          example: v1.0
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp when the mapping was created
+          example: 2025-11-21T03:57:36.056+05:30
+        updated_at:
+          type: string
+          format: date-time
+          description: Timestamp when the mapping was last updated
+          example: 2025-11-21T03:57:36.056+05:30
+        deleted_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Timestamp when the mapping was soft deleted (null if not deleted)
+          example: null
+
+    CreateAPIMapping:
+      type: object
+      description: Request payload for creating a new API mapping
+      required:
+        - sys_id
+        - api_id
+        - api_name
+        - api_version
+      properties:
+        sys_id:
+          type: string
+          minLength: 1
+          maxLength: 32
+          description: ServiceNow system identifier (must be unique)
+          example: SYS001
+        api_id:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: API identifier
+          example: API001
+        api_name:
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: Name of the API (unique with api_version)
+          example: UserService
+        api_version:
+          type: string
+          minLength: 1
+          maxLength: 50
+          description: Version of the API (unique with api_name)
+          example: v1.0
+
+    UpdateAPIMapping:
+      type: object
+      description: Request payload for updating an existing API mapping
+      properties:
+        api_id:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Updated API identifier
+          example: API001-updated
+        api_name:
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: Updated API name
+          example: UserServiceV2
+        api_version:
+          type: string
+          minLength: 1
+          maxLength: 50
+          description: Updated API version
+          example: v2.0
+
+    Error:
+      type: object
+      description: Error response object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Error message describing what went wrong
+          example: Invalid request payload

@@ -1,0 +1,99 @@
+{
+  "team_name": "ServiceNow Mapping Service Team",
+  "project_type": "golang-microservice",
+  "database": "mysql",
+  "created_at": "2025-11-21",
+  "agents": [
+    {
+      "id": "sql-pro",
+      "name": "SQL Professional",
+      "role": "Database Expert",
+      "specialization": "MySQL optimization, query design, schema architecture",
+      "tools": ["Read", "Write", "MultiEdit", "Bash", "mysql", "explain", "analyze"],
+      "responsibilities": [
+        "Design and optimize MySQL database schemas",
+        "Create efficient queries and indexes",
+        "Ensure data integrity and performance",
+        "Handle database migrations and versioning"
+      ]
+    },
+    {
+      "id": "golang-pro",
+      "name": "Golang Professional",
+      "role": "Backend Developer",
+      "specialization": "Go microservices, concurrent programming, performance",
+      "tools": ["Read", "Write", "MultiEdit", "Bash", "go", "gofmt", "golint", "delve"],
+      "responsibilities": [
+        "Implement idiomatic Go code",
+        "Build concurrent and performant services",
+        "Write comprehensive tests and benchmarks",
+        "Ensure code quality and best practices"
+      ]
+    },
+    {
+      "id": "api-designer",
+      "name": "API Designer",
+      "role": "Interface Architect",
+      "specialization": "REST/GraphQL design, OpenAPI, developer experience",
+      "tools": ["Read", "Write", "MultiEdit", "Bash", "openapi-generator", "swagger-ui"],
+      "responsibilities": [
+        "Design RESTful API endpoints",
+        "Create OpenAPI specifications",
+        "Ensure consistent API patterns",
+        "Optimize for developer experience"
+      ]
+    },
+    {
+      "id": "context-manager",
+      "name": "Context Manager",
+      "role": "Information Coordinator",
+      "specialization": "State management, data synchronization, knowledge base",
+      "tools": ["Read", "Write", "redis", "elasticsearch"],
+      "responsibilities": [
+        "Manage shared context across agents",
+        "Maintain project state and history",
+        "Coordinate information flow",
+        "Ensure data consistency"
+      ]
+    },
+    {
+      "id": "microservices-architect",
+      "name": "Microservices Architect",
+      "role": "System Designer",
+      "specialization": "Distributed systems, service mesh, cloud-native patterns",
+      "tools": ["Read", "Write", "MultiEdit", "Bash", "kubernetes", "istio"],
+      "responsibilities": [
+        "Define service boundaries",
+        "Design communication patterns",
+        "Ensure resilience and scalability",
+        "Establish operational excellence"
+      ]
+    },
+    {
+      "id": "knowledge-synthesizer",
+      "name": "Knowledge Synthesizer",
+      "role": "Intelligence Builder",
+      "specialization": "Pattern recognition, best practices, continuous improvement",
+      "tools": ["Read", "Write", "vector-db", "nlp-tools", "graph-db"],
+      "responsibilities": [
+        "Extract insights from team interactions",
+        "Identify patterns and best practices",
+        "Generate recommendations",
+        "Enable collective learning"
+      ]
+    }
+  ],
+  "collaboration_patterns": {
+    "architecture_design": ["microservices-architect", "api-designer", "context-manager"],
+    "database_development": ["sql-pro", "golang-pro", "context-manager"],
+    "api_implementation": ["api-designer", "golang-pro", "microservices-architect"],
+    "quality_improvement": ["knowledge-synthesizer", "golang-pro", "sql-pro"],
+    "system_optimization": ["microservices-architect", "sql-pro", "golang-pro", "knowledge-synthesizer"]
+  },
+  "communication_protocol": {
+    "context_requests": "All agents query context-manager for shared information",
+    "status_updates": "Agents report progress through JSON status messages",
+    "knowledge_sharing": "knowledge-synthesizer extracts and distributes insights",
+    "coordination": "microservices-architect oversees system-level decisions"
+  }
+}
