@@ -25,6 +25,9 @@ WORKDIR /root/
 # Copy binary from builder
 COPY --from=builder /app/server .
 
+# Set a non-root user
+USER 10014
+
 # Expose port
 EXPOSE 8080
 
