@@ -105,6 +105,24 @@ func (h *APIMappingHandler) UpdateMapping(c *gin.Context) {
 	c.JSON(http.StatusOK, mapping)
 }
 
+func (h *APIMappingHandler) UpdateMappingByAPIID(c *gin.Context) {
+	apiID := c.Param("api_id")
+
+	var req models.UpdateAPIMapping
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	mapping, err := h.service.UpdateMappingByAPIID(apiID, &req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, mapping)
+}
+
 func (h *APIMappingHandler) DeleteMapping(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {

@@ -116,6 +116,7 @@ func setupRouter(handler *handlers.APIMappingHandler) *gin.Engine {
 		mappings.GET("/api-id/:api_id", handler.GetMappingByAPIID)
 		mappings.GET("/search", handler.GetMappingByNameAndVersion)
 		mappings.PUT("/:id", handler.UpdateMapping)
+		mappings.PUT("/api-id/:api_id", handler.UpdateMappingByAPIID)
 		mappings.DELETE("/:id", handler.DeleteMapping)
 	}
 

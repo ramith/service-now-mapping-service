@@ -14,6 +14,7 @@ type APIMappingRepository interface {
 	GetByNameAndVersion(apiName, apiVersion string) (*models.APIMapping, error)
 	GetAll() ([]models.APIMapping, error)
 	Update(mapping *models.APIMapping) error
+	UpdateByAPIID(apiID string, mapping *models.APIMapping) error
 	Delete(id uint) error
 }
 
@@ -73,6 +74,10 @@ func (r *apiMappingRepository) GetAll() ([]models.APIMapping, error) {
 
 func (r *apiMappingRepository) Update(mapping *models.APIMapping) error {
 	return r.db.Save(mapping).Error
+}
+
+func (r *apiMappingRepository) UpdateByAPIID(apiID string, mapping *models.APIMapping) error {
+	return r.db.Model(&models.APIMapping{}).Where("api_id = ?", apiID).Updates(mapping).Error
 }
 
 func (r *apiMappingRepository) Delete(id uint) error {

@@ -175,6 +175,53 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+    put:
+      tags:
+        - Mappings
+      summary: Update mapping by API ID
+      description: Updates an API mapping using the API ID. All fields except api_id itself can be updated.
+      operationId: updateMappingByAPIID
+      parameters:
+        - name: api_id
+          in: path
+          required: true
+          description: API identifier
+          schema:
+            type: string
+            maxLength: 100
+            example: API001
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAPIMapping'
+      responses:
+        '200':
+          description: Mapping updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIMapping'
+        '400':
+          description: Invalid request payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Mapping not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /mappings/search:
     get:
       tags:

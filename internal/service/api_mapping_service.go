@@ -14,6 +14,7 @@ type APIMappingService interface {
 	GetMappingByNameAndVersion(apiName, apiVersion string) (*models.APIMapping, error)
 	GetAllMappings() ([]models.APIMapping, error)
 	UpdateMapping(id uint, req *models.UpdateAPIMapping) (*models.APIMapping, error)
+	UpdateMappingByAPIID(apiID string, req *models.UpdateAPIMapping) (*models.APIMapping, error)
 	DeleteMapping(id uint) error
 }
 
@@ -90,6 +91,34 @@ func (s *apiMappingService) UpdateMapping(id uint, req *models.UpdateAPIMapping)
 			return nil, errors.New("mapping not found")
 		}
 		mapping = found
+	}
+
+	// Update fields
+	if req.APIID != "" {
+		mapping.APIID = req.APIID
+	}
+	if req.APIName != "" {
+		mapping.APIName = req.APIName
+	}
+	if req.APIVersion != "" {
+		mapping.APIVersion = req.APIVersion
+	}
+
+	if err := s.repo.Update(mapping); err != nil {
+		return nil, err
+	}
+	return mapping, nil
+}
+
+func (s *apiMappingService) UpdateMappingByAPIID(apiID string, req *models.UpdateAPIMapping) (*models.APIMapping, error) {
+	if apiID == "" {
+		return nil, errors.New("api_id cannot be empty")
+	}
+
+	// Get existing mapping by api_id
+	mapping, err := s.repo.GetByAPIID(apiID)
+	if err != nil {
+		return nil, err
 	}
 
 	// Update fields
